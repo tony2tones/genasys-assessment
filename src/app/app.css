@@ -1,0 +1,11 @@
+.app-toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.app-nav-active {
+  text-decoration: underline;
+}
+
+.app-content {
+  padding: 1.5rem;
+}
