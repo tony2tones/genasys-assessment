@@ -1,6 +1,86 @@
 import { Quote } from '../../../shared/models/quote.model';
 
-// TODO: seed this with a handful of Quote records once MOCK_CUSTOMERS (in
-// features/customers/data/customer.mock.ts) is filled in — set customerId
-// to one of those customer ids and customerName to their full name.
-export const MOCK_QUOTES: Quote[] = [];
+// customerId/customerName pairs match MOCK_CUSTOMERS in
+// features/customers/data/customer.mock.ts.
+export const MOCK_QUOTES: Quote[] = [
+  {
+    id: 'q1',
+    customerId: '1',
+    customerName: 'Thabo Mokoena',
+    amount: 4500,
+    status: 'approved',
+    createdDate: '2026-05-12',
+  },
+  {
+    id: 'q2',
+    customerId: '1',
+    customerName: 'Thabo Mokoena',
+    amount: 6200,
+    status: 'pending',
+    createdDate: '2026-07-03',
+  },
+  {
+    id: 'q3',
+    customerId: '2',
+    customerName: 'Anja van der Merwe',
+    amount: 12800,
+    status: 'approved',
+    createdDate: '2026-04-20',
+  },
+  {
+    id: 'q4',
+    customerId: '3',
+    customerName: 'James Smith',
+    amount: 3100,
+    status: 'draft',
+    createdDate: '2026-08-01',
+  },
+  {
+    id: 'q5',
+    customerId: '4',
+    customerName: 'Mai Nguyen',
+    amount: 8900,
+    status: 'declined',
+    createdDate: '2026-03-15',
+  },
+  {
+    id: 'q6',
+    customerId: '5',
+    customerName: 'Lukas Schmidt',
+    amount: 5400,
+    status: 'pending',
+    createdDate: '2026-07-28',
+  },
+  {
+    id: 'q7',
+    customerId: '6',
+    customerName: 'Nomvula Dlamini',
+    amount: 7600,
+    status: 'approved',
+    createdDate: '2026-02-10',
+  },
+  {
+    id: 'q8',
+    customerId: '6',
+    customerName: 'Nomvula Dlamini',
+    amount: 2300,
+    status: 'expired',
+    createdDate: '2025-11-05',
+  },
+  {
+    id: 'q9',
+    customerId: '7',
+    customerName: 'Ewa Kowalski',
+    amount: 9950,
+    status: 'pending',
+    createdDate: '2026-08-10',
+  },
+  {
+    id: 'q10',
+    customerId: '8',
+    customerName: 'Rafael Silva',
+    amount: 4100,
+    status: 'draft',
+    createdDate: '2026-08-15',
+  },
+];

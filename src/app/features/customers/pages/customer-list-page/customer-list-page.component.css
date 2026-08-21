@@ -1,0 +1,10 @@
+.mat-column-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* mat-menu's panel renders via CDK Overlay, outside this component's view,
+   so it can't be styled from a component-scoped stylesheet. See the
+   .actions-menu-panel rule in src/styles.css instead, targeted via the
+   panelClass set on <mat-menu class="actions-menu-panel"> in the template. */
