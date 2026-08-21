@@ -63,6 +63,6 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   }
 
   onDeleteCustomer(customer: Customer) {
-    this.store.dispatch(CustomersPageActions.deleteCustomer({id: customer.id}))
+    this.store.dispatch(CustomersPageActions.deleteCustomer({ id: customer.id }));
   }
 }

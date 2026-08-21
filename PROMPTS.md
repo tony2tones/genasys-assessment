@@ -69,19 +69,11 @@ session (cleaned up):
   (`FormBuilder`, `FormArray` vs a flat `FormGroup`), `private`/`protected`/`readonly`
   field conventions, and how `withComponentInputBinding()` + signal `input()` replaces
   `ngOnChanges` for reacting to route params.
-- Asked Claude to diagnose and fix bugs as they were hit, including: a missing
-  `ReactiveFormsModule` import/typo; a `MatSortHeader`-without-`MatSort` runtime error;
-  an inverted `form.valid`/`form.invalid` submit guard that made the form never
-  actually submit; a broken `Router.navigate` call (missing route segment, malformed
-  command array); an `addresses` `FormArray` built from a plain object instead of
-  per-address `FormGroup`s (a type error); a template using `formGroupName` instead of
-  `formArrayName` for that same array ("Cannot find control" errors); a missing
-  `MatMenuModule` import plus a malformed `#actionsMenu` template reference variable;
-  and — the most substantive one — a two-part bug in the delete flow where the
-  confirm-dialog effect dispatched the dialog's boolean result as the customer id
-  instead of the real id, and a second effect to actually call the delete service was
-  missing entirely, so deletes silently did nothing despite the confirmation dialog
-  working correctly.
+- Asked Claude to diagnose and fix bugs as they were hit, including: a two-part bug in the
+   delete flow where the confirm-dialog effect dispatched the dialog's boolean result as 
+   the customer id instead of the real id, and a second effect to actually call the delete
+   service was missing entirely, so deletes silently did nothing despite the confirmation 
+   dialog working correctly.
 
 **What Claude did:** explained each concept/error in place and applied direct fixes for
 clearly mechanical issues (imports, typos, wiring, the delete-effect bug), while leaving

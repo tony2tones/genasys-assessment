@@ -72,6 +72,6 @@ export class CustomerFormPageComponent {
         CustomersPageActions.addCustomer({ customer: { ...formValue, id: crypto.randomUUID() } }),
       );
     }
-    this.router.navigateByUrl('customers')
+    this.router.navigateByUrl('customers');
   }
 }
