@@ -52,3 +52,43 @@ written, reducer/effects left as TODOs) so the graded NgRx logic is written by t
 **Outcome:** clean base to build on — `pnpm start` boots with working lazy-loaded
 navigation between empty Customers/Quotes pages, Material + Tailwind coexist without
 conflict, and the NgRx skeletons compile with TODOs marking exactly what to fill in.
+
+---
+
+## Session 2 — Customer CRUD: NgRx wiring, reactive form, Material table (2026-08-20 to 2026-08-21)
+
+**Relates to:** Objective 2 (Customer Management page) and Objective 4 (Add/Edit/Delete via NgRx Store).
+
+Author-led implementation, with AI used for explanations and debugging help as issues
+came up — not for writing the core reducer/effect/form logic. Prompts across this
+session (cleaned up):
+- Asked for mock customer and quote data to be generated.
+- Asked Claude to explain concepts while building: the `@ngrx/effects` `Actions`
+  injectable and how chained effects communicate purely through the dispatched-action
+  stream, the Angular Material `MatTable`/`MatSort`/`MatMenu` APIs, Reactive Forms
+  (`FormBuilder`, `FormArray` vs a flat `FormGroup`), `private`/`protected`/`readonly`
+  field conventions, and how `withComponentInputBinding()` + signal `input()` replaces
+  `ngOnChanges` for reacting to route params.
+- Asked Claude to diagnose and fix bugs as they were hit, including: a missing
+  `ReactiveFormsModule` import/typo; a `MatSortHeader`-without-`MatSort` runtime error;
+  an inverted `form.valid`/`form.invalid` submit guard that made the form never
+  actually submit; a broken `Router.navigate` call (missing route segment, malformed
+  command array); an `addresses` `FormArray` built from a plain object instead of
+  per-address `FormGroup`s (a type error); a template using `formGroupName` instead of
+  `formArrayName` for that same array ("Cannot find control" errors); a missing
+  `MatMenuModule` import plus a malformed `#actionsMenu` template reference variable;
+  and — the most substantive one — a two-part bug in the delete flow where the
+  confirm-dialog effect dispatched the dialog's boolean result as the customer id
+  instead of the real id, and a second effect to actually call the delete service was
+  missing entirely, so deletes silently did nothing despite the confirmation dialog
+  working correctly.
+
+**What Claude did:** explained each concept/error in place and applied direct fixes for
+clearly mechanical issues (imports, typos, wiring, the delete-effect bug), while leaving
+the actual NgRx reducer/effect logic and form structure for the author to design and write.
+
+**Outcome:** working Customer Management page — a Material table with sort and a
+row-actions menu (view quotes / edit / delete), a full add/edit reactive form with a
+multi-address `FormArray`, and complete NgRx CRUD (add/update/delete, delete gated by a
+Material confirm dialog through a two-step effect), all reflected live in the table via
+signals reading from the store.
