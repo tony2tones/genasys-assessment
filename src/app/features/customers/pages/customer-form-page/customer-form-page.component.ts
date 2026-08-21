@@ -4,10 +4,8 @@ import { Store } from '@ngrx/store';
 import { selectCustomerEntities } from '../../state/customers.selectors';
 import { CustomersPageActions } from '../../state/customers.actions';
 import { Address } from '../../../../shared/models/customer.model';
+import { Router } from '@angular/router';
 
-// TODO: Objective 2/4 — reactive form (firstName, lastName, addresses
-// FormArray) that dispatches CustomersPageActions.addCustomer or
-// updateCustomer depending on whether a route :id is present.
 // TODO: Task 5 (AI-assisted) — enrichment panel here: debounced surname ->
 // Nationalize API -> country confirm/override -> university search-as-you-type.
 @Component({
@@ -18,6 +16,7 @@ import { Address } from '../../../../shared/models/customer.model';
 export class CustomerFormPageComponent {
   private readonly store = inject(Store);
   private readonly fb = inject(FormBuilder);
+  router = inject(Router);
 
   protected readonly id = input<string>();
 
@@ -73,5 +72,6 @@ export class CustomerFormPageComponent {
         CustomersPageActions.addCustomer({ customer: { ...formValue, id: crypto.randomUUID() } }),
       );
     }
+    this.router.navigateByUrl('customers')
   }
 }

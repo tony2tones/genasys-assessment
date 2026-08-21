@@ -1,3 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/* Row-actions menu panel (customer list page). Overlay-rendered content
+   (mat-menu, mat-dialog, etc.) lives outside any component's view
+   encapsulation, so it has to be styled here rather than in a component
+   stylesheet — set via panelClass="actions-menu-panel" on <mat-menu>. Uses
+   Material's own menu container-color token (falling back to a plain value)
+   so it stays consistent with the app's Azure/Blue theme. */
+.mat-mdc-menu-panel.actions-menu-panel.mat-menu-below.mat-menu-before {
+/* .div#mat-menu-panel-1{ */
+  --mat-menu-container-color: #ffffff;
+  font-family: Roboto, sans-serif;
+  min-width: 200px;
+  border-radius: 12px;
+  line-height: 2rem;
+  display: inline-flex;  /* Keeps the container inline with other text */
+  align-items: center; 
+}
+
+.actions-menu-panel .warn-item {
+  color: var(--mat-sys-error, #ba1a1a);
+}

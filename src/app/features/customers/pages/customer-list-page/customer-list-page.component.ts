@@ -9,12 +9,6 @@ import { Customer } from '../../../../shared/models/customer.model';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-
-// TODO: Objective 2 — Material table of customers (TABLE_IMPORTS from
-// shared/material/table.imports.ts), local signals for filter text + sort,
-// a "Add Customer" button routing to 'new', row actions routing to
-// ':id/edit' and to /quotes?customerId=<id>, and a delete action dispatching
-// CustomersPageActions.deleteCustomer (confirmation is handled by the effect).
 @Component({
   selector: 'app-customer-list-page',
   templateUrl: `./customer-list-page.component.html`,
@@ -32,10 +26,21 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Customer>();
 
   constructor() {
+    this.dataSource.sortingDataAccessor = (customer, sortHeaderId) => {
+      switch (sortHeaderId) {
+        case 'city':
+          return customer.addresses[0]?.city ?? '';
+        case 'suburb':
+          return customer.addresses[0]?.suburb ?? '';
+        default:
+          return (customer as unknown as Record<string, string>)[sortHeaderId];
+      }
+    };
+
     effect(() => (this.dataSource.data = this.customers()));
   }
 
-  readonly displayColumns = ['firstName', 'lastName', 'city', 'actions'];
+  readonly displayColumns = ['firstName', 'lastName', 'city', 'suburb', 'actions'];
 
   ngOnInit(): void {
     this.store.dispatch(CustomersPageActions.loadCustomers());
