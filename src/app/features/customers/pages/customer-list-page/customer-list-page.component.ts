@@ -51,7 +51,9 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   }
 
   onViewQuotes(customer: Customer) {
-    console.log(customer);
+    this.router.navigate(['/quotes'], {
+      queryParams: { customerId: customer.id, customerName: `${customer.firstName} ${customer.lastName}` },
+    });
   }
 
   createCustomer() {

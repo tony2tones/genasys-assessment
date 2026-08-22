@@ -1,0 +1,27 @@
+mat-chip {
+    width: 6rem;
+}
+
+.mat-column-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.status-pill {
+    display: inline-flex;     /* Enables layout controls */
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;      /* Centers vertically */
+    width: 6rem;              /* Your exact layout width constraint */
+    padding: 6px 0;           /* Top/Bottom internal space */
+    border-radius: 16px;      /* Pill round shapes */
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Quick optional background colour references */
+.status-pill.pending { background-color: #fff3cd; color: #856404; }
+.status-pill.approved { background-color: #d4edda; color: #589165; }
+.status-pill.draft { background-color: #8c720b; color: #ffffff; }
+.status-pill.declined { background-color: #f8b5bb; color: #b91d2d; }
+.status-pill.expired { background-color: #2d2c2c; color: #bdbabb; }
