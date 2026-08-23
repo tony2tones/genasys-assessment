@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ViewChild, effect, inject, OnInit, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { CustomersPageActions } from '../../state/customers.actions';
@@ -9,11 +18,21 @@ import { Customer } from '../../../../shared/models/customer.model';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-customer-list-page',
   templateUrl: `./customer-list-page.component.html`,
   styleUrl: './customer-list-page.component.css',
-  imports: [...TABLE_IMPORTS, MatButtonModule, MatMenuModule],
+  imports: [
+    ...TABLE_IMPORTS,
+    MatButtonModule,
+    MatMenuModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+  ],
 })
 export class CustomerListPageComponent implements OnInit, AfterViewInit {
   store = inject(Store);
@@ -27,6 +46,16 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   loading = this.store.selectSignal(selectCustomersLoading);
   dataSource = new MatTableDataSource<Customer>();
 
+  readonly filteredCustomers = computed(() => {
+    const search = this.filterText().trim().toLowerCase();
+    if (!search) {
+      return this.customers();
+    }
+    return this.customers().filter((customer) =>
+      `${customer.firstName} ${customer.lastName}`.toLowerCase().includes(search),
+    );
+  });
+
   constructor() {
     this.dataSource.sortingDataAccessor = (customer, sortHeaderId) => {
       switch (sortHeaderId) {
@@ -39,7 +68,7 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
       }
     };
 
-    effect(() => (this.dataSource.data = this.customers()));
+    effect(() => (this.dataSource.data = this.filteredCustomers()));
   }
 
   readonly displayColumns = ['firstName', 'lastName', 'city', 'suburb', 'actions'];

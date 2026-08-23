@@ -196,3 +196,41 @@ via a searchable country list, scoped university search-as-you-type, and correct
 persistence/pre-fill of `nationality`/`university` on the customer record through both
 the add and edit flows, with no console errors.
 
+---
+
+## Session 5 — Pre-submission review and polish (2026-08-23)
+
+**Relates to:** all objectives (review pass), Objective 2.3.2 and 3.3 specifically
+(the two gaps found and fixed).
+
+**Prompt (cleaned up):**
+> Could you review my submission against the assessment and give feedback on areas to
+> improve? [Then, after the review:] Let's do those steps to wrap up for Monday — update
+> the README, add the Task 5 entry to PROMPTS.md, and open a new branch to address the
+> remaining issues you flagged. [Then:] Can we merge main and address the filtering gaps
+> and other loose ends from the review? [Then:] Can we also center the status pill under
+> the Status column header?
+
+**What Claude did:**
+- Reviewed the actual current code (not just memory of earlier sessions) against every
+  objective and acceptance criterion, and found two concrete, checkable gaps: the
+  customer list had a `filterText` signal declared but never wired to anything — no
+  input, no filtering — so Objective 2.3.2 ("filtering and sorting") only had sorting
+  working; and the quote list had no status filter at all, only customer-name, so
+  Objective 3.3 ("filtering by customer or status") was half-done. Also flagged (as
+  lower priority, since neither is an explicit requirement): zero test coverage beyond
+  the original scaffolded spec, and a generic, unedited README.
+- Updated the README with a project overview and a pointer to this prompt log.
+- Added a status filter (`mat-select`) to the quote list, folded into the existing
+  `filteredQuotes` computed() alongside the customer-name filter.
+- Centered the status pill under the Status column header, using the same
+  `mat-column-<name>` targeting technique already used for the actions column's
+  right-alignment.
+- Verified every change live in the browser (typed a filter, picked a status, confirmed
+  the list narrowed correctly each time) rather than trusting the build alone, and
+  checked the console stayed clean throughout.
+
+**Outcome:** both explicit-requirement gaps from the review closed and verified live;
+`main` now has Task 5 merged; `assessment-polish` carries the filter fixes and the
+status-pill alignment fix, ready to be reviewed/merged when the author chooses.
+
