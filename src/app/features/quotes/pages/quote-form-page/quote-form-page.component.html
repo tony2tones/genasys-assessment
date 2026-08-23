@@ -51,6 +51,6 @@
       }
     </select>
 
-    <button mat-button type="submit" [disabled]="quoteForm.invalid">Submit</button>
+    <button mat-button type="submit" [disabled]="quoteForm.invalid">{{ id() ? 'Edit quote' : 'Add quote' }}</button>
   </div>
 </form>

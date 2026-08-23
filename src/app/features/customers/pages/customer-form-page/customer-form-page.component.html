@@ -59,17 +59,21 @@
           />
         </fieldset>
       }
-      <!-- TODO: "Country" was in the old markup but Address has no country field
-           (nor does createAddressGroup build one) — decide if this should be
-           Customer.nationality (Task 5's field) or dropped, then wire it back in. -->
     </div>
+
+    <app-nationality-enrichment
+      [surname]="surname()"
+      [initialNationality]="customer()?.nationality"
+      [initialUniversity]="customer()?.university"
+      (enrichmentChange)="onEnrichmentChange($event)"
+    />
 
     <button
       type="submit"
       [disabled]="customerForm.invalid"
       class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm p-2 mt-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      Add Customer
+      {{ id() ? 'Edit customer' : 'Add Customer' }}
     </button>
   </form>
 </div>
