@@ -1,0 +1,27 @@
+mat-chip {
+    width: 6rem;
+}
+
+.mat-column-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.status-pill {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 6rem;
+    padding: 6px 0;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Accessible status colors — soft tint bg + dark text of same hue, ~7:1+ contrast */
+.status-pill.pending  { background-color: #fef3c7; color: #92400e; } /* amber */
+.status-pill.approved { background-color: #d1fae5; color: #065f46; } /* green */
+.status-pill.draft    { background-color: #f3f4f6; color: #374151; } /* neutral gray */
+.status-pill.declined { background-color: #fee2e2; color: #991b1b; } /* red */
+.status-pill.expired  { background-color: #e5e7eb; color: #1f2937; } /* slate */

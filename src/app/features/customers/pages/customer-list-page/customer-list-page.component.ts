@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, effect, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, effect, inject, OnInit, signal } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { CustomersPageActions } from '../../state/customers.actions';
@@ -20,6 +20,8 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   router = inject(Router);
 
   @ViewChild(MatSort) sort!: MatSort;
+
+  filterText = signal('');
 
   customers = this.store.selectSignal(selectAllCustomers);
   loading = this.store.selectSignal(selectCustomersLoading);
@@ -51,7 +53,9 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
   }
 
   onViewQuotes(customer: Customer) {
-    console.log(customer);
+    this.router.navigate(['/quotes'], {
+      queryParams: { customerId: customer.id, customerName: `${customer.firstName} ${customer.lastName}` },
+    });
   }
 
   createCustomer() {
