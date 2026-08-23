@@ -1,33 +1,36 @@
-<form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
-  <h2 class="text-xl font-semibold text-center">
-    {{ id() ? 'Edit customer' : 'Create new customer' }}
-  </h2>
+<div class="min-h-screen flex items-center justify-center p-4">
+  <form
+    [formGroup]="customerForm"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-sm"
+  >
+    <h2 class="text-xl font-semibold text-center">
+      {{ id() ? 'Edit customer' : 'Create new customer' }}
+    </h2>
 
-  <div class="flex flex-col gap-1">
-    <label for="firstName" class="text-sm font-medium text-gray-700">First name</label>
-    <input
-      id="firstName"
-      type="text"
-      formControlName="firstName"
-      class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-  </div>
+    <div class="flex flex-col gap-1">
+      <label for="firstName" class="text-sm font-medium text-gray-700">First name</label>
+      <input
+        id="firstName"
+        type="text"
+        formControlName="firstName"
+        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
 
-  <div class="flex flex-col gap-1">
-    <label for="lastName" class="text-sm font-medium text-gray-700">Last name</label>
-    <input
-      id="lastName"
-      type="lastName"
-      formControlName="lastName"
-      class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-  </div>
+    <div class="flex flex-col gap-1">
+      <label for="lastName" class="text-sm font-medium text-gray-700">Last name</label>
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+    </div>
 
-  <div formArrayName="addresses">
-    @for (addressGroup of addresses.controls; track $index; let i = $index) {
-      <fieldset [formGroupName]="i">
-        <legend class="text-sm font-medium text-gray-700 px-1">Address {{ i + 1 }}</legend>
-        <div class="flex flex-col gap-1">
+    <div formArrayName="addresses">
+      @for (addressGroup of addresses.controls; track $index; let i = $index) {
+        <fieldset [formGroupName]="i" class="flex flex-col gap-2 m-0 min-w-0 p-0">
           <label [for]="'street-' + i" class="text-sm font-medium text-gray-700">Street</label>
           <input
             [id]="'street-' + i"
@@ -54,18 +57,19 @@
             formControlName="postalCode"
             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-        </div>
-      </fieldset>
-    }
-    <!-- TODO: "Country" was in the old markup but Address has no country field
-         (nor does createAddressGroup build one) — decide if this should be
-         Customer.nationality (Task 5's field) or dropped, then wire it back in. -->
-  </div>
+        </fieldset>
+      }
+      <!-- TODO: "Country" was in the old markup but Address has no country field
+           (nor does createAddressGroup build one) — decide if this should be
+           Customer.nationality (Task 5's field) or dropped, then wire it back in. -->
+    </div>
 
-  <button
-    type="submit"
-    class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm p-2 mt-2 cursor-pointer transition-colors"
-  >
-    Add Customer
-  </button>
-</form>
+    <button
+      type="submit"
+      [disabled]="customerForm.invalid"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm p-2 mt-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Add Customer
+    </button>
+  </form>
+</div>

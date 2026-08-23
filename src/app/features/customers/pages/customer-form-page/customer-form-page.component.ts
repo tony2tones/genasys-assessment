@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectCustomerEntities } from '../../state/customers.selectors';
 import { CustomersPageActions } from '../../state/customers.actions';
@@ -28,16 +28,16 @@ export class CustomerFormPageComponent {
 
   private createAddressGroup(address?: Address) {
     return this.fb.nonNullable.group({
-      street: [address?.street ?? ''],
-      city: [address?.city ?? ''],
-      suburb: [address?.suburb ?? ''],
-      postalCode: [address?.postalCode ?? ''],
+      street: [address?.street ?? '', Validators.required],
+      city: [address?.city ?? '', Validators.required],
+      suburb: [address?.suburb ?? '', Validators.required],
+      postalCode: [address?.postalCode ?? '', Validators.required],
     });
   }
 
   readonly customerForm = this.fb.nonNullable.group({
-    firstName: [''],
-    lastName: [''],
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
     addresses: this.fb.array([this.createAddressGroup()]),
   });
 

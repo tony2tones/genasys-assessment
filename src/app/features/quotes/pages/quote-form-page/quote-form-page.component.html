@@ -3,19 +3,39 @@
     {{ id() ? 'Edit quote' : 'Create new quote' }}
   </h2>
   <div class="flex flex-col gap-1">
-    <label for="customerName">Customer Name</label>
-    <input
-      id="customerName"
-      formControlName="customerName"
-      type="text"
-      class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
+    @if (showCustomerPicker()) {
+      <label for="customerPicker">Customer</label>
+      <mat-select
+        id="customerPicker"
+        placeholder="Select a customer"
+        required
+        [value]="pickedCustomerId()"
+        (selectionChange)="onPickCustomer($event.value)"
+      >
+        @for (customer of customers(); track customer.id) {
+          <mat-option [value]="customer.id"
+            >{{ customer.firstName }} {{ customer.lastName }}</mat-option
+          >
+        }
+      </mat-select>
+    } @else {
+      <label for="customerName">Customer Name</label>
+      <input
+        id="customerName"
+        formControlName="customerName"
+        type="text"
+        required
+        readonly
+        class="border border-gray-300 rounded-md px-3 py-2 bg-gray-100"
+      />
+    }
 
     <label for="amount">Amount</label>
     <input
       id="amount"
       formControlName="amount"
       type="number"
+      required
       class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     />
 
@@ -23,6 +43,7 @@
     <select
       id="status"
       formControlName="status"
+      required
       class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
     >
       @for (status of statuses; track $index) {
@@ -30,6 +51,6 @@
       }
     </select>
 
-    <button mat-button type="submit">Submit</button>
+    <button mat-button type="submit" [disabled]="quoteForm.invalid">Submit</button>
   </div>
 </form>
