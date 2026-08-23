@@ -22,3 +22,13 @@
 .actions-menu-panel .warn-item {
   color: var(--mat-sys-error, #ba1a1a);
 }
+
+/* Quote list's "Status" column header (mat-sort-header). Same reason as the
+   menu panel above: mat-sort-header renders its label inside its own
+   .mat-sort-header-container, which is MatSortHeader's own component
+   template, not the quote list page's — so a component-scoped rule can
+   never match it. The .mat-column-status ancestor class is still what
+   scopes this to just the one column. */
+.mat-column-status .mat-sort-header-container {
+  justify-content: center;
+}
