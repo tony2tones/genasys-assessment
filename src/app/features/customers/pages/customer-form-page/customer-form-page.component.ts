@@ -1,17 +1,20 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectCustomerEntities } from '../../state/customers.selectors';
 import { CustomersPageActions } from '../../state/customers.actions';
-import { Address } from '../../../../shared/models/customer.model';
+import { Address, University } from '../../../../shared/models/customer.model';
 import { Router } from '@angular/router';
+import {
+  EnrichmentResult,
+  NationalityEnrichmentComponent,
+} from '../../components/nationality-enrichment/nationality-enrichment.component';
 
-// TODO: Task 5 (AI-assisted) — enrichment panel here: debounced surname ->
-// Nationalize API -> country confirm/override -> university search-as-you-type.
 @Component({
   selector: 'app-customer-form-page',
   templateUrl: `./customer-form-page.component.html`,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NationalityEnrichmentComponent],
 })
 export class CustomerFormPageComponent {
   private readonly store = inject(Store);
@@ -21,7 +24,7 @@ export class CustomerFormPageComponent {
   protected readonly id = input<string>();
 
   private readonly customerEntities = this.store.selectSignal(selectCustomerEntities);
-  private readonly customer = computed(() => {
+  protected readonly customer = computed(() => {
     const id = this.id();
     return id ? this.customerEntities()[id] : undefined;
   });
@@ -45,6 +48,13 @@ export class CustomerFormPageComponent {
     return this.customerForm.controls.addresses;
   }
 
+  protected readonly surname = toSignal(this.customerForm.controls.lastName.valueChanges, {
+    initialValue: this.customerForm.controls.lastName.value,
+  });
+
+  protected readonly enrichedNationality = signal<string | undefined>(undefined);
+  protected readonly enrichedUniversity = signal<University | undefined>(undefined);
+
   constructor() {
     effect(() => {
       const customer = this.customer();
@@ -52,6 +62,11 @@ export class CustomerFormPageComponent {
         this.customerForm.patchValue(customer);
       }
     });
+  }
+
+  protected onEnrichmentChange(result: EnrichmentResult): void {
+    this.enrichedNationality.set(result.nationality);
+    this.enrichedUniversity.set(result.university);
   }
 
   onSubmit() {
@@ -62,14 +77,21 @@ export class CustomerFormPageComponent {
 
     const formValue = this.customerForm.getRawValue();
     const currentId = this.id();
+    const existingCustomer = this.customer();
+    const nationality = this.enrichedNationality() ?? existingCustomer?.nationality;
+    const university = this.enrichedUniversity() ?? existingCustomer?.university;
 
     if (currentId) {
       this.store.dispatch(
-        CustomersPageActions.updateCustomer({ customer: { ...formValue, id: currentId } }),
+        CustomersPageActions.updateCustomer({
+          customer: { ...formValue, id: currentId, nationality, university },
+        }),
       );
     } else {
       this.store.dispatch(
-        CustomersPageActions.addCustomer({ customer: { ...formValue, id: crypto.randomUUID() } }),
+        CustomersPageActions.addCustomer({
+          customer: { ...formValue, id: crypto.randomUUID(), nationality, university },
+        }),
       );
     }
     this.router.navigateByUrl('customers');

@@ -1,0 +1,94 @@
+<div class="flex flex-col gap-3 border border-gray-200 rounded-md p-4 mt-2">
+  <h3 class="text-sm font-semibold text-gray-700">Nationality &amp; university</h3>
+
+  @if (!selectedCountry()) {
+    @if (predicting()) {
+      <div class="flex items-center gap-2 text-sm text-gray-500">
+        <mat-spinner diameter="16" />
+        Predicting nationality from surname…
+      </div>
+    } @else if (predictions().length) {
+      <div class="flex flex-col gap-1">
+        <span class="text-sm text-gray-600">Is this customer from:</span>
+        <div class="flex flex-wrap gap-2">
+          @for (prediction of predictions(); track prediction.countryCode) {
+            @if (countryFor(prediction.countryCode); as country) {
+              <button
+                type="button"
+                class="border border-gray-300 rounded-full px-3 py-1 text-sm hover:bg-gray-100"
+                (click)="selectPrediction(prediction)"
+              >
+                {{ country.flag }} {{ country.name }} ({{ prediction.probability * 100 | number: '1.0-0' }}%)
+              </button>
+            }
+          }
+        </div>
+      </div>
+    } @else {
+      <span class="text-sm text-gray-500">Enter a surname above to predict nationality, or search below.</span>
+    }
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Or search all countries</mat-label>
+      <input
+        matInput
+        [formControl]="countrySearchControl"
+        [matAutocomplete]="countryAuto"
+        placeholder="e.g. South Africa"
+      />
+      <mat-autocomplete
+        #countryAuto="matAutocomplete"
+        [displayWith]="displayCountry"
+        (optionSelected)="confirmCountry($event.option.value)"
+      >
+        @for (country of filteredCountries(); track country.alpha2Code) {
+          <mat-option [value]="country">{{ country.flag }} {{ country.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  } @else {
+    <div class="flex items-center justify-between">
+      <span class="text-sm">
+        Nationality: <strong>{{ selectedCountry()!.flag }} {{ selectedCountry()!.name }}</strong>
+      </span>
+      <button type="button" class="text-sm text-blue-600 hover:underline" (click)="changeCountry()">
+        Change
+      </button>
+    </div>
+
+    <mat-form-field appearance="outline" class="w-full">
+      <mat-label>Search universities in {{ selectedCountry()!.name }}</mat-label>
+      <input
+        matInput
+        [formControl]="universityQueryControl"
+        [matAutocomplete]="uniAuto"
+        placeholder="Start typing a university name…"
+      />
+      <mat-autocomplete
+        #uniAuto="matAutocomplete"
+        [displayWith]="displayUniversity"
+        (optionSelected)="selectUniversity($event.option.value)"
+      >
+        @for (uni of universityResults(); track uni.name) {
+          <mat-option [value]="uni">{{ uni.name }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    @if (searchingUniversities()) {
+      <span class="text-sm text-gray-500">Searching universities…</span>
+    }
+
+    @if (selectedUniversity(); as uni) {
+      <div class="text-sm">
+        Selected university: <strong>{{ uni.name }}</strong>
+        @if (uni.website) {
+          —
+          <a [href]="uni.website" target="_blank" rel="noopener" class="text-blue-600 hover:underline">{{
+            uni.website
+          }}</a>
+        }
+      </div>
+    }
+  }
+</div>

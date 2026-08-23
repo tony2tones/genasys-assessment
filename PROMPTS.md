@@ -133,3 +133,66 @@ form that can be reached either from a specific customer's context or via a stan
 customer picker, with real required-field validation on both the quote and customer
 forms; and the customer↔quote navigation (Objective 3.4) working in both directions.
 
+---
+
+## Session 4 — Task 5: AI-only enrichment panel (2026-08-23)
+
+**Relates to:** Objective 5 (the enrichment panel), specifically built with AI as
+instructed by the assessment brief — this session is logged in more detail than
+Tasks 2–4 for that reason.
+
+**Prompt (cleaned up):**
+> I need to get this assignment finished. I've added filtering for the customer list,
+> and I still need a way to select a customer when creating a quote, plus the AI
+> enrichment panel from Task 5 — could you build both?
+
+**What Claude did:**
+- Verified the real response shapes of all three external APIs (Nationalize,
+  countries.dev, hipolabs) with direct `curl` calls before writing any parsing code,
+  rather than guessing field names against a live, ungraded-if-wrong integration.
+- Added `provideHttpClient()` to `app.config.ts` (missing until this point — nothing had
+  called an HTTP API yet).
+- Built `EnrichmentService` (`core/services/enrichment.service.ts`): `predictNationality`
+  (debounce/backoff is the caller's job; the service just wraps the call and treats
+  empty predictions and failures — including 429s — the same way, as "no predictions"),
+  `getCountries` (fetched once and cached via `shareReplay(1)`, per the brief), and
+  `searchUniversities`.
+- Built `NationalityEnrichmentComponent` (`features/customers/components/nationality-
+  enrichment/`): debounced (500ms) surname → prediction chips showing flag/name/
+  probability; a searchable `mat-autocomplete` over the full country list as an override;
+  once a country is confirmed, a second debounced (300ms) search-as-you-type university
+  lookup scoped to that country via another `mat-autocomplete`; pre-fills from an
+  existing customer's saved `nationality`/`university` in edit mode.
+- Wired it into `CustomerFormPageComponent`: the panel reads the form's `lastName`
+  control reactively (`toSignal(valueChanges)`), and emits back up to two signals that
+  get merged into the dispatched `Customer` object on submit (falling back to the
+  existing customer's saved values if the panel was never touched, so editing a customer
+  without re-touching the enrichment panel doesn't blank those fields out).
+- Live-tested the whole chain in a real browser against the real APIs (not mocked) —
+  caught and fixed three bugs this way that wouldn't have shown up from reading the code
+  alone: (1) selecting a country/university rendered the input as literal
+  `"[object Object]"` because `mat-autocomplete` needs an explicit `displayWith` function
+  when option values are objects, not strings; (2) that same object-not-string value
+  then crashed the debounced university-search pipeline with `query.trim is not a
+  function`, since selecting an option also re-fires `valueChanges` with the selected
+  object, not just user-typed strings; (3) the country search box's live-filtering
+  `computed()` was reading a plain `FormControl.value` getter directly, which Angular's
+  `computed()` doesn't track as a reactive dependency — needed `toSignal(valueChanges)`
+  instead for typing to actually filter the list.
+- Later, after this work had been set aside with `git stash push -u` (so Customer/Quotes
+  could be tested in isolation without Task 5 in the way) and the isolated work got
+  committed and merged on its own branch, restored Task 5 with `git stash pop` — this
+  landed on a branch that had diverged further than expected, producing two real merge
+  conflicts in `customer-form-page.component.ts`/`.html` where both the enrichment
+  wiring and separately-added form-validation work touched overlapping regions. Resolved
+  both by hand, keeping every change from both sides, then re-verified the *combined*
+  result end to end in a live browser (create with prediction → country override search
+  → university search → submit → edit → confirm pre-fill), rather than trusting that a
+  clean `git diff` alone meant the merge was semantically correct.
+
+**Outcome:** working enrichment panel, verified end to end against the live Nationalize,
+countries.dev, and hipolabs APIs (not stubbed) — debounced prediction, confirm/override
+via a searchable country list, scoped university search-as-you-type, and correct
+persistence/pre-fill of `nationality`/`university` on the customer record through both
+the add and edit flows, with no console errors.
+
