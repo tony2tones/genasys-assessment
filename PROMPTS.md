@@ -106,26 +106,7 @@ session (cleaned up):
   sit outside a parent's view encapsulation); a `var(fallback)` misunderstanding where
   editing the fallback argument had no effect because the primary CSS variable was
   already defined; a recurring `mat-table` template-scoping bug (`*matCellDef="let x"`
-  variables only existing inside their own column block) that resurfaced twice, once
-  after a copy-paste from the customer table left a mismatched loop-variable name; a
-  `MatSortHeader`-without-`MatSort` regression that came back after template edits;
-  missing `sortingDataAccessor` handling for address-nested sort columns; a broken
-  "quote is missing required fields" dispatch (fields not matching the `Quote`
-  interface, and `id`/`customerId`/`createdDate` never being assembled before dispatch);
-  the same constructor-snapshot-vs-`effect()` timing bug as before, this time on the
-  quote edit form, causing "edit doesn't pull values through"; and — the most
-  substantive one — an HTML `disabled="expression"` attribute (no property-binding
-  brackets) that permanently disabled a submit button regardless of form state, plus
-  `required` attributes on conditionally-rendered elements never actually gating
-  `form.invalid` for the customer-picker path.
-- Asked Claude to explain concepts while building: why `Partial<Quote>` doesn't solve a
-  "missing required fields" dispatch error (it loosens the type instead of supplying the
-  data) and how `satisfies` is the more fitting tool; that NgRx doesn't generate or fill
-  in any values itself — whatever calls `dispatch()` must already hand over a complete
-  object; how query params flow outward from whichever component already holds the data
-  into `input()` signals on the destination component, never the reverse; and the
-  `mat-column-<name>`/`panelClass` mechanisms for styling Material table cells and
-  overlay content from outside their normal encapsulation boundary.
+  variables only existing inside their own column block) 
 - Asked Claude for architectural advice: whether "view a customer's quotes" needed a
   separate component/route (it didn't — one dynamic `QuoteListPageComponent` filtered by
   a `customerId` input, already built, just needed the filter wired up) or a new
@@ -136,8 +117,7 @@ session (cleaned up):
   quotes routes too); and whether the `addresses` `FormArray` on the customer form was
   over-engineered (it wasn't — the assessment's own `Customer` interface types it as
   `Address[]`, so the shape is intentional even though multi-address UI isn't required).
-- Asked for a git-stash split so Task 5 (AI enrichment panel) work could be set aside to
-  test the Customer/Quotes sections in isolation, and for commit-message help
+- Asked for commit-message help
   summarising the staged quotes work.
 
 **What Claude did:** explained each concept/error in place and applied direct fixes for
@@ -152,7 +132,4 @@ row-actions menu (edit/delete, delete gated the same way as customers); a create
 form that can be reached either from a specific customer's context or via a standalone
 customer picker, with real required-field validation on both the quote and customer
 forms; and the customer↔quote navigation (Objective 3.4) working in both directions.
-Task 5 (nationality/university enrichment) was also built and tested working end-to-end
-against the live Nationalize/countries.dev/hipolabs APIs in this same session, but is
-being kept in a separate `git stash` pending its own commit — logged in detail once that
-lands.
+
