@@ -8,6 +8,12 @@ mat-chip {
   text-align: right;
 }
 
+.mat-column-status {
+  text-align: center;
+}
+/* The sort-header label's own centering rule lives in the global
+   src/styles.css — MatSortHeader renders it in its own component
+   template, which a component-scoped rule here can never reach. */
 
 .status-pill {
     display: inline-flex;
