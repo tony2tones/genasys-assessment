@@ -8,6 +8,10 @@ mat-chip {
   text-align: right;
 }
 
+.mat-column-status {
+  text-align: center;
+}
+
 .status-pill {
     display: inline-flex;
     justify-content: center;
