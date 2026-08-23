@@ -15,6 +15,16 @@
   }
 </mat-form-field>
 
+<mat-form-field appearance="outline" class="status-filter">
+  <mat-label>Filter by status</mat-label>
+  <mat-select [value]="statusFilter()" (selectionChange)="statusFilter.set($event.value)">
+    <mat-option value="all">All statuses</mat-option>
+    @for (status of statuses; track status) {
+      <mat-option [value]="status">{{ status }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
 <table mat-table matSort [dataSource]="dataSource">
   <ng-container matColumnDef="customerName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer name</th>
@@ -58,7 +68,7 @@
 
   <tr class="mat-row" *matNoDataRow>
     <td class="mat-cell no-data-cell" [attr.colspan]="displayColumns.length">
-      @if (filterText() || customerId()) {
+      @if (filterText() || customerId() || statusFilter() !== 'all') {
         No quotes found matching your filter.
       } @else {
         No quotes yet.

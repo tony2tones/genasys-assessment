@@ -1,5 +1,20 @@
 <h1 class="text-2xl m-4 p-2">Customer Management</h1>
 <button mat-button (click)="createCustomer()">Create Customer</button>
+<mat-form-field appearance="outline" class="customer-filter">
+  <mat-label>Filter by name</mat-label>
+  <input
+    matInput
+    [ngModel]="filterText()"
+    (ngModelChange)="filterText.set($event)"
+    placeholder="e.g. Jane Smith"
+  />
+  @if (filterText()) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="filterText.set('')">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+</mat-form-field>
+
 <table mat-table matSort [dataSource]="dataSource">
   <ng-container matColumnDef="firstName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
@@ -32,7 +47,7 @@
           <span>View Quotes</span>
         </button>
         <button mat-menu-item (click)="onEditCustomer(customer)">
-          <mat-icon>Edit</mat-icon>
+          <mat-icon>edit</mat-icon>
           <span>Edit customer</span>
         </button>
         <button mat-menu-item (click)="onDeleteCustomer(customer)" class="warn-item">
@@ -45,4 +60,14 @@
 
   <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayColumns"></tr>
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell no-data-cell" [attr.colspan]="displayColumns.length">
+      @if (filterText()) {
+        No customers found matching your filter.
+      } @else {
+        No customers yet.
+      }
+    </td>
+  </tr>
 </table>

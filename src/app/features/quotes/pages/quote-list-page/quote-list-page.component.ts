@@ -23,6 +23,10 @@ import { MatSort } from '@angular/material/sort';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { QuoteStatus } from '../../../../shared/models/quote.model';
+
+type StatusFilter = QuoteStatus | 'all';
 
 @Component({
   selector: 'app-quote-list-page',
@@ -35,6 +39,7 @@ import { MatInputModule } from '@angular/material/input';
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     FormsModule,
   ],
 })
@@ -47,6 +52,8 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   filterText = signal('');
+  statusFilter = signal<StatusFilter>('all');
+  readonly statuses: QuoteStatus[] = ['draft', 'pending', 'approved', 'declined', 'expired'];
 
   quotes = this.store.selectSignal(selectAllQuotes);
   loading = this.store.selectSignal(selectQuotesLoading);
@@ -55,6 +62,7 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
   readonly filteredQuotes = computed(() => {
     const customerId = this.customerId();
     const search = this.filterText().trim().toLocaleLowerCase();
+    const status = this.statusFilter();
 
     let result = customerId
       ? this.quotes().filter((quote) => quote.customerId === customerId)
@@ -62,6 +70,10 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
 
     if (search) {
       result = result.filter((quote) => quote.customerName?.toLowerCase().includes(search));
+    }
+
+    if (status !== 'all') {
+      result = result.filter((quote) => quote.status === status);
     }
 
     return result;
