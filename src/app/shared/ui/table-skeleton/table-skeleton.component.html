@@ -1,0 +1,9 @@
+<div class="flex flex-col gap-3 p-4" aria-hidden="true">
+  @for (row of rowIndexes(); track $index) {
+    <div class="flex gap-6 animate-pulse">
+      @for (col of columnIndexes(); track $index) {
+        <div class="h-4 flex-1 rounded bg-gray-200"></div>
+      }
+    </div>
+  }
+</div>

@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +23,7 @@ import { Router } from '@angular/router';
   selector: 'app-quote-form-page',
   templateUrl: `./quote-form-page.component.html`,
   imports: [ReactiveFormsModule, MatButtonModule, MatSelectModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuoteFormPageComponent {
   private readonly fb = inject(FormBuilder);

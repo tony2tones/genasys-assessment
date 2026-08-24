@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   computed,
   effect,
@@ -9,6 +10,8 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { TABLE_IMPORTS } from '../../../../shared/material/table.imports';
@@ -25,6 +28,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { QuoteStatus } from '../../../../shared/models/quote.model';
+import { TableSkeletonComponent } from '../../../../shared/ui/table-skeleton/table-skeleton.component';
 
 type StatusFilter = QuoteStatus | 'all';
 
@@ -41,7 +45,9 @@ type StatusFilter = QuoteStatus | 'all';
     MatInputModule,
     MatSelectModule,
     FormsModule,
+    TableSkeletonComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuoteListPageComponent implements OnInit, AfterViewInit {
   store = inject(Store);
@@ -51,7 +57,13 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort!: MatSort;
 
+  // Bound directly to the filter <input> so typing feels instant; the
+  // actual filtering reads the debounced signal below instead.
   filterText = signal('');
+  private readonly debouncedFilterText = toSignal(
+    toObservable(this.filterText).pipe(debounceTime(300), takeUntilDestroyed()),
+    { initialValue: '' },
+  );
   statusFilter = signal<StatusFilter>('all');
   readonly statuses: QuoteStatus[] = ['draft', 'pending', 'approved', 'declined', 'expired'];
 
@@ -61,7 +73,7 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
 
   readonly filteredQuotes = computed(() => {
     const customerId = this.customerId();
-    const search = this.filterText().trim().toLocaleLowerCase();
+    const search = this.debouncedFilterText().trim().toLocaleLowerCase();
     const status = this.statusFilter();
 
     let result = customerId
@@ -92,6 +104,8 @@ export class QuoteListPageComponent implements OnInit, AfterViewInit {
     };
     effect(() => (this.dataSource.data = this.filteredQuotes()));
   }
+
+  protected readonly trackByQuoteId = (_index: number, quote: Quote): string => quote.id;
 
   readonly displayColumns = ['customerName', 'amount', 'status', 'actions'];
 

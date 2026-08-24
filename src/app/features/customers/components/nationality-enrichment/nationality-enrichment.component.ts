@@ -1,5 +1,14 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -35,6 +44,7 @@ export interface EnrichmentResult {
     MatProgressSpinnerModule,
     DecimalPipe,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NationalityEnrichmentComponent {
   private readonly enrichment = inject(EnrichmentService);

@@ -15,7 +15,10 @@
   }
 </mat-form-field>
 
-<table mat-table matSort [dataSource]="dataSource">
+@if (loading()) {
+  <app-table-skeleton [columns]="displayColumns.length" />
+} @else {
+<table mat-table matSort [dataSource]="dataSource" [trackBy]="trackByCustomerId">
   <ng-container matColumnDef="firstName">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
     <td mat-cell *matCellDef="let customer">{{ customer.firstName }}</td>
@@ -71,3 +74,4 @@
     </td>
   </tr>
 </table>
+}

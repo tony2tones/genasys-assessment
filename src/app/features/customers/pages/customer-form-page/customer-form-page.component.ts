@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -15,6 +23,7 @@ import {
   selector: 'app-customer-form-page',
   templateUrl: `./customer-form-page.component.html`,
   imports: [ReactiveFormsModule, NationalityEnrichmentComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerFormPageComponent {
   private readonly store = inject(Store);

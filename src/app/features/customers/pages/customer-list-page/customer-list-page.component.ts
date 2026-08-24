@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ViewChild,
   computed,
@@ -8,6 +9,8 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { CustomersPageActions } from '../../state/customers.actions';
@@ -21,6 +24,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { TableSkeletonComponent } from '../../../../shared/ui/table-skeleton/table-skeleton.component';
 @Component({
   selector: 'app-customer-list-page',
   templateUrl: `./customer-list-page.component.html`,
@@ -32,7 +36,9 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     MatInputModule,
     FormsModule,
+    TableSkeletonComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomerListPageComponent implements OnInit, AfterViewInit {
   store = inject(Store);
@@ -40,14 +46,20 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatSort) sort!: MatSort;
 
+  // Bound directly to the filter <input> so typing feels instant; the
+  // actual filtering reads the debounced signal below instead.
   filterText = signal('');
+  private readonly debouncedFilterText = toSignal(
+    toObservable(this.filterText).pipe(debounceTime(300), takeUntilDestroyed()),
+    { initialValue: '' },
+  );
 
   customers = this.store.selectSignal(selectAllCustomers);
   loading = this.store.selectSignal(selectCustomersLoading);
   dataSource = new MatTableDataSource<Customer>();
 
   readonly filteredCustomers = computed(() => {
-    const search = this.filterText().trim().toLowerCase();
+    const search = this.debouncedFilterText().trim().toLowerCase();
     if (!search) {
       return this.customers();
     }
@@ -67,9 +79,10 @@ export class CustomerListPageComponent implements OnInit, AfterViewInit {
           return (customer as unknown as Record<string, string>)[sortHeaderId];
       }
     };
-
     effect(() => (this.dataSource.data = this.filteredCustomers()));
   }
+
+  protected readonly trackByCustomerId = (_index: number, customer: Customer): string => customer.id;
 
   readonly displayColumns = ['firstName', 'lastName', 'city', 'suburb', 'actions'];
 
