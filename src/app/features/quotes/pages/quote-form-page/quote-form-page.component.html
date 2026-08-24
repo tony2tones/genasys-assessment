@@ -1,56 +1,91 @@
-<form [formGroup]="quoteForm" (ngSubmit)="onSubmit()">
-  <h2 class="text-xl font-semibold text-center">
-    {{ id() ? 'Edit quote' : 'Create new quote' }}
-  </h2>
-  <div class="flex flex-col gap-1">
-    @if (showCustomerPicker()) {
-      <label for="customerPicker">Customer</label>
-      <mat-select
-        id="customerPicker"
-        placeholder="Select a customer"
-        required
-        [value]="pickedCustomerId()"
-        (selectionChange)="onPickCustomer($event.value)"
-      >
-        @for (customer of customers(); track customer.id) {
-          <mat-option [value]="customer.id"
-            >{{ customer.firstName }} {{ customer.lastName }}</mat-option
+<div class="h-auto flex justify-center p-4">
+  <form
+    [formGroup]="quoteForm"
+    (ngSubmit)="onSubmit()"
+    novalidate
+    aria-labelledby="quoteFormTitle"
+    class="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-sm"
+  >
+    <h2 id="quoteFormTitle" class="text-xl font-semibold text-center">
+      {{ id() ? 'Edit quote' : 'Create new quote' }}
+    </h2>
+
+    <div class="flex flex-col gap-1">
+      @if (showCustomerPicker()) {
+        <label for="customerPicker" class="text-sm font-medium text-gray-700">Customer</label>
+        <mat-select
+          id="customerPicker"
+          placeholder="Select a customer"
+          required
+          aria-label="Customer"
+          [attr.aria-invalid]="!pickedCustomerId()"
+          aria-describedby="customerPicker-error"
+          [value]="pickedCustomerId()"
+          (selectionChange)="onPickCustomer($event.value)"
+        >
+          @for (customer of customers(); track customer.id) {
+            <mat-option [value]="customer.id"
+              >{{ customer.firstName }} {{ customer.lastName }}</mat-option
+            >
+          }
+        </mat-select>
+        @if (!pickedCustomerId()) {
+          <span id="customerPicker-error" role="alert" class="text-xs text-red-600"
+            >Select a customer.</span
           >
         }
-      </mat-select>
-    } @else {
-      <label for="customerName">Customer Name</label>
-      <input
-        id="customerName"
-        formControlName="customerName"
-        type="text"
-        required
-        readonly
-        class="border border-gray-300 rounded-md px-3 py-2 bg-gray-100"
-      />
-    }
-
-    <label for="amount">Amount</label>
-    <input
-      id="amount"
-      formControlName="amount"
-      type="number"
-      required
-      class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    />
-
-    <label for="status">Status</label>
-    <select
-      id="status"
-      formControlName="status"
-      required
-      class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    >
-      @for (status of statuses; track $index) {
-        <option>{{ status }}</option>
+      } @else {
+        <label for="customerName" class="text-sm font-medium text-gray-700">Customer Name</label>
+        <input
+          id="customerName"
+          formControlName="customerName"
+          type="text"
+          required
+          readonly
+          class="border border-gray-300 rounded-md px-3 py-2 bg-gray-100"
+        />
       }
-    </select>
+    </div>
 
-    <button mat-button type="submit" [disabled]="quoteForm.invalid">{{ id() ? 'Edit quote' : 'Add quote' }}</button>
-  </div>
-</form>
+    <div class="flex flex-col gap-1">
+      <label for="amount" class="text-sm font-medium text-gray-700">Amount</label>
+      <input
+        id="amount"
+        formControlName="amount"
+        type="number"
+        required
+        min="1"
+        [attr.aria-invalid]="quoteForm.controls.amount.invalid && quoteForm.controls.amount.touched"
+        aria-describedby="amount-error"
+        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      @if (quoteForm.controls.amount.invalid && quoteForm.controls.amount.touched) {
+        <span id="amount-error" role="alert" class="text-xs text-red-600"
+          >Enter an amount of at least 1.</span
+        >
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="status" class="text-sm font-medium text-gray-700">Status</label>
+      <select
+        id="status"
+        formControlName="status"
+        required
+        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        @for (status of statuses; track $index) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="quoteForm.invalid"
+      class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm p-2 mt-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {{ id() ? 'Save quote' : 'Add quote' }}
+    </button>
+  </form>
+</div>

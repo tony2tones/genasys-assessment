@@ -2,9 +2,11 @@
   <form
     [formGroup]="customerForm"
     (ngSubmit)="onSubmit()"
+    novalidate
+    aria-labelledby="customerFormTitle"
     class="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-sm"
   >
-    <h2 class="text-xl font-semibold text-center">
+    <h2 id="customerFormTitle" class="text-xl font-semibold text-center">
       {{ id() ? 'Edit customer' : 'Create new customer' }}
     </h2>
 
@@ -14,8 +16,16 @@
         id="firstName"
         type="text"
         formControlName="firstName"
+        required
+        [attr.aria-invalid]="customerForm.controls.firstName.invalid && customerForm.controls.firstName.touched"
+        aria-describedby="firstName-error"
         class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       />
+      @if (customerForm.controls.firstName.invalid && customerForm.controls.firstName.touched) {
+        <span id="firstName-error" role="alert" class="text-xs text-red-600"
+          >First name is required.</span
+        >
+      }
     </div>
 
     <div class="flex flex-col gap-1">
@@ -24,39 +34,80 @@
         id="lastName"
         type="text"
         formControlName="lastName"
+        required
+        [attr.aria-invalid]="customerForm.controls.lastName.invalid && customerForm.controls.lastName.touched"
+        aria-describedby="lastName-error"
         class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       />
+      @if (customerForm.controls.lastName.invalid && customerForm.controls.lastName.touched) {
+        <span id="lastName-error" role="alert" class="text-xs text-red-600"
+          >Last name is required.</span
+        >
+      }
     </div>
 
     <div formArrayName="addresses">
       @for (addressGroup of addresses.controls; track $index; let i = $index) {
         <fieldset [formGroupName]="i" class="flex flex-col gap-2 m-0 min-w-0 p-0">
+          <legend class="text-sm font-medium text-gray-700 p-0">Address</legend>
           <label [for]="'street-' + i" class="text-sm font-medium text-gray-700">Street</label>
           <input
             [id]="'street-' + i"
             formControlName="street"
+            required
+            [attr.aria-invalid]="addressGroup.controls.street.invalid && addressGroup.controls.street.touched"
+            [attr.aria-describedby]="'street-' + i + '-error'"
             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
+          @if (addressGroup.controls.street.invalid && addressGroup.controls.street.touched) {
+            <span [id]="'street-' + i + '-error'" role="alert" class="text-xs text-red-600"
+              >Street is required.</span
+            >
+          }
           <label [for]="'city-' + i" class="text-sm font-medium text-gray-700">City</label>
           <input
             [id]="'city-' + i"
             formControlName="city"
+            required
+            [attr.aria-invalid]="addressGroup.controls.city.invalid && addressGroup.controls.city.touched"
+            [attr.aria-describedby]="'city-' + i + '-error'"
             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
+          @if (addressGroup.controls.city.invalid && addressGroup.controls.city.touched) {
+            <span [id]="'city-' + i + '-error'" role="alert" class="text-xs text-red-600"
+              >City is required.</span
+            >
+          }
           <label [for]="'suburb-' + i" class="text-sm font-medium text-gray-700">Suburb</label>
           <input
             [id]="'suburb-' + i"
             formControlName="suburb"
+            required
+            [attr.aria-invalid]="addressGroup.controls.suburb.invalid && addressGroup.controls.suburb.touched"
+            [attr.aria-describedby]="'suburb-' + i + '-error'"
             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
+          @if (addressGroup.controls.suburb.invalid && addressGroup.controls.suburb.touched) {
+            <span [id]="'suburb-' + i + '-error'" role="alert" class="text-xs text-red-600"
+              >Suburb is required.</span
+            >
+          }
           <label [for]="'postalCode-' + i" class="text-sm font-medium text-gray-700"
             >Postal code</label
           >
           <input
             [id]="'postalCode-' + i"
             formControlName="postalCode"
+            required
+            [attr.aria-invalid]="addressGroup.controls.postalCode.invalid && addressGroup.controls.postalCode.touched"
+            [attr.aria-describedby]="'postalCode-' + i + '-error'"
             class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
+          @if (addressGroup.controls.postalCode.invalid && addressGroup.controls.postalCode.touched) {
+            <span [id]="'postalCode-' + i + '-error'" role="alert" class="text-xs text-red-600"
+              >Postal code is required.</span
+            >
+          }
         </fieldset>
       }
     </div>
@@ -73,7 +124,7 @@
       [disabled]="customerForm.invalid"
       class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-sm p-2 mt-2 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {{ id() ? 'Edit customer' : 'Add Customer' }}
+      {{ id() ? 'Save customer' : 'Add Customer' }}
     </button>
   </form>
 </div>
