@@ -33,4 +33,9 @@ export class QuoteService {
     this.quotes = this.quotes.filter((quote) => quote.id !== id);
     return of(id).pipe(delay(SIMULATED_LATENCY_MS));
   }
+
+  /** Persists an in-progress edit to an existing quote. Same shape as `update`. */
+  saveDraft(quote: Quote): Observable<Quote> {
+    return this.update(quote);
+  }
 }
